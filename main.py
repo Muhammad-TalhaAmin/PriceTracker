@@ -61,7 +61,7 @@ if not price:
 
 # clean price (Amazon format: $199.99)
 floated_value = float(price.replace("$", "").replace(",", ""))
-
+print(floated_value)
 with open("data.csv", "a", newline="") as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow([

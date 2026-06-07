@@ -1,0 +1,44 @@
+import csv
+from datetime import datetime
+import requests
+from bs4 import BeautifulSoup
+import smtplib
+import os
+from dotenv import load_dotenv
+ITEM="Adjustable-dumbbell-upgraded-Kettlebells-Exercise"
+URL=f"https://www.amazon.com/{ITEM}/dp/B0DB1FDJ9C/ref=sr_1_1?_encoding=UTF8&content-id=amzn1.sym.3fdbc1ee-e2a3-48ef-a93a-bce40e980706&dib=eyJ2IjoiMSJ9.fEGVKcaXmraOtZYMfsQWHw8AVxneK6NyXagVMbB3exsi537M900-QPsC0xDl4VXx9A8nL-Y-DKsH-vVhVfLVlIl8mCcHJy3OCvXg4XPa2TZBjDkGrl_nJZ3IWZyz6voO54nkt4wbRsLQV3FNODMdBYJZSOZxozsfS4M4zMyHv22NK5YVSC8XonDJ-01oKDd5ARq8lOcTFNjBhm8EW0uki6nc1yY4aKJNcmurVxZwCp8imQN8_SwgDXGVFF3-glufALF43Cso862rbhKpCpART6CTqZe3BRZfgn9WyjVlRjI.UakLDVDBJ3FBwB86WdbWXvnT96wcCCTMdb9fekACt1E&dib_tag=se&keywords=fitness%2Bequipment&pd_rd_r=f2299a4b-9179-459f-b8d7-8f34ae5c2841&pd_rd_w=pDiAh&pd_rd_wg=gPSTW&qid=1780827483&sr=8-1&th=1"
+load_dotenv()
+my_email=os.getenv("my_email")
+password=os.getenv("password")
+DESIRED_PRICE=20000
+header = {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br, zstd",
+    "Accept-Language": "en-GB,de;q=0.8,fr;q=0.6,en;q=0.4,ja;q=0.2",
+    "Dnt": "1",
+    "Priority": "u=1",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
+    "Sec-Gpc": "1",
+    "Upgrade-Insecure-Requests": "1",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:126.0) Gecko/20100101 Firefox/126.0",
+}
+response=requests.get(URL,headers=header)
+soup=BeautifulSoup(response.text,"html.parser")
+price=soup.find(class_="a-offscreen").get_text()
+without_currency=(price.split("PKR")[1]).replace(",","")
+floated_value=float(without_currency)
+with open("data.csv","a",newline="") as csvfile:
+    csvfilewriter=csv.writer(csvfile)
+    csvfilewriter.writerow([datetime.now().strftime("%Y-%m-%d"),ITEM,floated_value])
+if floated_value<=DESIRED_PRICE:
+    with smtplib.SMTP("smtp.gmail.com",587,timeout=30) as connection:
+        connection.starttls()
+        connection.login(my_email,password)
+
+        connection.sendmail(from_addr=my_email, to_addrs="2024n03358@gmail.com",
+        msg=f"Subject:PRICE TRACKER\n\nThe {ITEM} have gone down to desired price of PKR {DESIRED_PRICE}\n Buy them at the link: {URL}")
+
+        connection.close()

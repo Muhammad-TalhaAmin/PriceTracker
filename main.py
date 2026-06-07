@@ -26,7 +26,14 @@ header = {
 }
 response=requests.get(URL,headers=header)
 soup=BeautifulSoup(response.text,"html.parser")
-price=soup.find(class_="a-offscreen").get_text()
+price_tag = soup.find(class_="a-offscreen")
+
+if price_tag is None:
+    print("Price element not found.")
+    print(response.url)
+    exit(1)
+
+price = price_tag.get_text()
 without_currency=(price.split("PKR")[1]).replace(",","")
 floated_value=float(without_currency)
 with open("data.csv","a",newline="") as csvfile:

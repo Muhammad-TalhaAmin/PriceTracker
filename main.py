@@ -76,6 +76,6 @@ if floated_value<=DESIRED_PRICE:
         connection.login(MY_EMAIL,PASSWORD)
     
         connection.sendmail(from_addr=MY_EMAIL, to_addrs="2024n03358@gmail.com",
-        msg=f"Subject:PRICE TRACKER\n\nThe {ITEM} have gone down to desired price of PKR {DESIRED_PRICE}\n Buy them at the link: {URL}")
+        msg=f"Subject:PRICE TRACKER\n\nThe price of {ITEM} has dropped to desired price of $ {DESIRED_PRICE}\n Buy them at the link: {URL}")
 
         connection.close()

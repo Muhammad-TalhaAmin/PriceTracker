@@ -15,15 +15,14 @@ header = header = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36",
     "Accept-Language": "en-US,en;q=0.9",
 }
-response
 for i in range(3):
     response = requests.get(URL, headers=header)
     if "captcha" not in response.text.lower():
-        print("Status Code:", response.status_code)
-        print("Final URL:", response.url)
-        print(response.text[:1000])
         break
     time.sleep(5)
+print("Status Code:", response.status_code)
+print("Final URL:", response.url)
+print(response.text[:1000])
 soup=BeautifulSoup(response.text,"html.parser")
 price_tag = soup.find(class_="a-offscreen")
 

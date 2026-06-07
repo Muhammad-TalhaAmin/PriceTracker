@@ -1,0 +1,30 @@
+name: Price Tracker Automation
+
+on:
+  schedule:
+    - cron: "0 3 * * *"   
+  workflow_dispatch:        # manual run button
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Price Tracker
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          python main.py
